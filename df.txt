@@ -1,0 +1,169 @@
+q1
+
+INSERT INTO students (id, name, gender) VALUES 
+(3,'Kim','F'),
+(4,'Molina','F'),
+(5,'Dev','M');
+
+select * from students;
+
+
+q2
+
+SELECT
+    name, population, area
+FROM
+    world
+WHERE
+    area > 3000000 OR population > 25000000
+;
+
+q3
+
+SELECT
+    s.name
+FROM
+    salesperson s
+WHERE
+    s.sales_id NOT IN (SELECT
+            o.sales_id
+        FROM
+            orders o
+                LEFT JOIN
+            company c ON o.com_id = c.com_id
+        WHERE
+            c.name = 'RED')
+;
+
+q4
+
+SELECT
+    MIN(ABS(p1.x - p2.x)) AS shortest
+FROM
+    point p1
+        JOIN
+    point p2 ON p1.x != p2.x
+;
+
+q5
+
+
+SELECT u.name AS name, COALESCE(SUM(r.distance),0) AS travelled_distance
+FROM Users u LEFT JOIN Rides r
+ON u.id = r.user_id
+GROUP BY u.name
+ORDER BY travelled_distance DESC, u.name;
+
+q6
+
+
+select '[0-5>' as bin, count(duration) as total from Sessions where duration < 300
+union
+select '[5-10>', count(duration) from Sessions where duration between 300 and 599
+union
+select '[10-15>', count(duration) from Sessions where duration between 600 and 899
+union
+select '15 or more', count(duration) from Sessions where duration >= 900;
+
+q7
+
+SELECT e.employee_id, team_size
+FROM Employee e 
+ JOIN (SELECT team_id, COUNT(*) AS team_size
+     FROM Employee 
+     GROUP BY team_id) t
+ON e.team_id = t.team_id;
+
+q8
+
+select id, 
+	sum(case when month = 'Jan' then revenue else null end) as Jan_Revenue,
+	sum(case when month = 'Feb' then revenue else null end) as Feb_Revenue,
+	sum(case when month = 'Mar' then revenue else null end) as mar_Revenue,
+	sum(case when month = 'Apr' then revenue else null end) as Apr_Revenue,
+	sum(case when month = 'May' then revenue else null end) as May_Revenue,
+	sum(case when month = 'Jun' then revenue else null end) as Jun_Revenue,
+	sum(case when month = 'Jul' then revenue else null end) as Jul_Revenue,
+	sum(case when month = 'Aug' then revenue else null end) as Aug_Revenue,
+	sum(case when month = 'Sep' then revenue else null end) as Sep_Revenue,
+	sum(case when month = 'Oct' then revenue else null end) as Oct_Revenue,
+	sum(case when month = 'Nov' then revenue else null end) as Nov_Revenue,
+	sum(case when month = 'Dec' then revenue else null end) as Dec_Revenue
+	from Department
+	group by id
+	order by id;
+
+    q9
+
+    SELECT
+    MAX(num) AS num
+FROM
+    (SELECT
+        num
+    FROM
+        my_numbers
+    GROUP BY num
+    HAVING COUNT(num) = 1) AS t;
+
+    q10
+
+    SELECT
+    customer_number
+FROM
+    orders
+GROUP BY customer_number
+ORDER BY COUNT(*) DESC
+LIMIT 1
+;
+
+q11
+
+SELECT
+    Employee.name, Bonus.bonus
+FROM
+    Employee
+        LEFT JOIN
+    Bonus ON Employee.empid = Bonus.empid
+WHERE
+    bonus < 1000 OR bonus IS NULL
+;
+
+q12
+
+SELECT name FROM customer WHERE referee_id <> 2 OR referee_id IS NULL;
+
+q13
+
+SELECT
+    dept_name, COUNT(student_id) AS student_number
+FROM
+    department
+        LEFT OUTER JOIN
+    student ON department.dept_id = student.dept_id
+GROUP BY department.dept_name
+ORDER BY student_number DESC , department.dept_name
+;
+
+q14
+
+SELECT followee as follower, COUNT(DISTINCT follower) as num
+FROM follow
+WHERE followee IN (SELECT DISTINCT follower FROM follow)
+GROUP BY followee;
+
+q15
+
+SELECT
+    (CASE
+        WHEN MOD(id, 2) != 0 AND counts != id THEN id + 1
+        WHEN MOD(id, 2) != 0 AND counts = id THEN id
+        ELSE id - 1
+    END) AS id,
+    student
+FROM
+    seat,
+    (SELECT
+        COUNT(*) AS counts
+    FROM
+        seat) AS seat_counts
+ORDER BY id ASC;
